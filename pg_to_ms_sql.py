@@ -123,11 +123,11 @@ for schema in transfer.get_schemas():
             
             if not cicle%pull:                  # Если заполнился пул, то скидываем его на загрузку в посгрес
                 pgsql.insert_many(table=table, schema=schema, s_values=s_values, list_records=sql_s)   # Само скидывание
-                print('\t Pull', table, 'cicle ==>', cicle, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
+                print('\t Pull', schema, table, 'cicle ==>', cicle, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
                 sql_s = []
         # А теперь остаток от общего количества записей, кторый не вошел в последний пул
         pgsql.insert_many(table=table, schema=schema, s_values=s_values, list_records=sql_s)   # Само скидывание
-        print('\tEnd', table, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
+        print('\tEnd', schema, table, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
         print()
 
 # Закрываем подключения к базам
