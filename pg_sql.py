@@ -11,7 +11,6 @@ class PgSql():
         self.password = password
         self.cursor = None
         self.conn = None
-
         
     def connect(self):
         self.conn = psycopg2.connect(dbname=self.database, user=self.username, password=self.password, host=self.server)
