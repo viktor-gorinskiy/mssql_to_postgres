@@ -9,3 +9,14 @@ Driver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so
 CPTimeout =
 CPReuse =
 ```
+### pyodbc
+```
+apt install tdsodbc
+apt install unixodbc-dev
+pip install pyodbc
+```
+### psycopg2
+```
+apt install libpq-dev
+pip install psycopg2
+```

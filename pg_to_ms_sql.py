@@ -121,7 +121,7 @@ for table in tables:
             print('\t Pull', table, 'cicle ==>', cicle, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
             sql_s = []
         
-    pgsql.insert_many(table, sql_s)
+    pgsql.insert_many(table=table, s_values=s_values, list_records=sql_s)
     print('\tEnd', table, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
     print()
 

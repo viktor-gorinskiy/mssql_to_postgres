@@ -13,4 +13,4 @@ pg_username = 'postgres_user'
 pg_password = 'phuX6neWohg1Pexuh3phuyeeLe3Hoh'
 pg_server   = 'postgres.vbest.local'
 
-pull = 5000
+pull = 1000
