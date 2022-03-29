@@ -43,8 +43,8 @@ class MStoPGsql():
         return sql_lines
 
 
-    def get_sql_create_table_to_pg(self, table):                # Возвращает строку с правильным SQL для создания таблицы в PG   
-        sql = f"""CREATE TABLE IF NOT EXISTS"{table}"(\n"""
+    def get_sql_create_table_to_pg(self, schema, table):                # Возвращает строку с правильным SQL для создания таблицы в PG   
+        sql = f"""CREATE TABLE IF NOT EXISTS {schema}.{table}(\n"""
         c = 0
         sql_lenes = self.get_MStoPG_columns(table)
         for sql_lene in sql_lenes:
@@ -58,8 +58,8 @@ class MStoPGsql():
         sql += ');'
         return(sql)
 
-    def transfer_table(self, table):
-        sql = self.get_sql_create_table_to_pg(table)
+    def transfer_table(self, schema, table):
+        sql = self.get_sql_create_table_to_pg(schema, table)
         pgsql.create_table(sql)
 
     def gen_S(self, table):
@@ -67,6 +67,12 @@ class MStoPGsql():
         s_values = (", ".join(['%s' for x in range(count_columns)]))
         return s_values
 
+    def get_schemas(self):
+        schemas = []
+        for schema in mssql.get_schemas():
+            if schema not in config.ignore_schemas:
+                schemas.append(schema)
+        return schemas
  
 mssql = ms_sql.MsSql(
     odbc_driver=config.odbc_driver,
@@ -74,7 +80,6 @@ mssql = ms_sql.MsSql(
     database=config.ms_database,
     username=config.ms_username,
     password=config.ms_password,
-    table_schem=config.table_schem
 )
 
 pgsql = pg_sql.PgSql(
@@ -90,31 +95,40 @@ pgsql.connect()
 
 transfer = MStoPGsql()
 
-tables = mssql.get_tables(ignore_tables=config.ignore_tables)
+# tables = mssql.get_tables(schema, ignore_tables=config.ignore_tables)
 
-for table in tables:
-    print(table)
-    s_values = transfer.gen_S(table)
-    transfer.transfer_table(table)      # Создаем таблицу в Postgress
-    
-    count_records_table = mssql.len_records_in_table(table)     # Получаем общее количество записей в таблице
-    all_records_in_table = mssql.get_all_records(table)         # Получаем все записи в таблице
-    
-    sql_s = []              # Массив для передачи записей в  Postgress
-    cicle = 0               # Счетчик циклов
-    pull = config.pull      # Количество записей, которые будут добавлены в массив sql_s
-    for row in all_records_in_table:    # Перебираем записи по одной
-        cicle += 1
-        sql_s.append(row)
+# schema = config.table_schem
+
+# print(transfer.get_schemas())
+for schema in transfer.get_schemas():
+
+    pgsql.create_schema(schema)
+
+    tables = mssql.get_tables(schema, ignore_tables=config.ignore_tables)
+
+    for table in tables:
+        print(table)
+        s_values = transfer.gen_S(table)
+        transfer.transfer_table(schema, table)      # Создаем таблицу в Postgress
         
-        if not cicle%pull:                  # Если заполнился пул, то скидываем его на загрузку в посгрес
-            pgsql.insert_many(table=table, s_values=s_values, list_records=sql_s)   # Само скидывание
-            print('\t Pull', table, 'cicle ==>', cicle, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
-            sql_s = []
-    # А теперь остаток от общего количества записей, кторый не вошел в последний пул
-    pgsql.insert_many(table=table, s_values=s_values, list_records=sql_s)   # Само скидывание
-    print('\tEnd', table, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
-    print()
+        count_records_table = mssql.len_records_in_table(schema, table)     # Получаем общее количество записей в таблице
+        all_records_in_table = mssql.get_all_records(schema, table)         # Получаем все записи в таблице
+        
+        sql_s = []              # Массив для передачи записей в  Postgress
+        cicle = 0               # Счетчик циклов
+        pull = config.pull      # Количество записей, которые будут добавлены в массив sql_s
+        for row in all_records_in_table:    # Перебираем записи по одной
+            cicle += 1
+            sql_s.append(row)
+            
+            if not cicle%pull:                  # Если заполнился пул, то скидываем его на загрузку в посгрес
+                pgsql.insert_many(table=table, schema=schema, s_values=s_values, list_records=sql_s)   # Само скидывание
+                print('\t Pull', table, 'cicle ==>', cicle, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
+                sql_s = []
+        # А теперь остаток от общего количества записей, кторый не вошел в последний пул
+        pgsql.insert_many(table=table, schema=schema, s_values=s_values, list_records=sql_s)   # Само скидывание
+        print('\tEnd', table, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
+        print()
 
 # Закрываем подключения к базам
 mssql.close

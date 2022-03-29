@@ -4,9 +4,8 @@ ms_server = '10-sqltest-vsrv,1433'
 ms_username = 'gorinskiy' 
 ms_password = 'gorinskiy1'
 odbc_driver = 'FreeTDS'
-# table_schem = 'dbo'
 ignore_schemas = ['INFORMATION_SCHEMA', 'sys']
-ignore_tables=['sysdiagrams']
+ignore_tables = ['sysdiagrams']
 
 pg_database = ms_database
 # pg_database = 'TelephoneDirectory_test'

@@ -18,10 +18,10 @@ cursor = connection.cursor()
 table = 'MTS_MobilDetalsComment'
 c = 1
 for row in cursor.tables():
-    if row.table_schem == "dbo":
-        c +=1
-        # print(c, row[2])
-        print(c, row)
+    # if row.table_schem == "dbo":
+    c +=1
+    # print(c, row[2])
+    print(c, row)
         # if row[3] == 'TABLE' and row[2] != 'sysdiagrams':
         #     c +=1
         #     print(c, row)
@@ -30,6 +30,14 @@ for row in cursor.tables():
 # cursor.tables()
 # columns = [column[0] for column in cursor.description]
 # print('===>',columns)
+
+
+tmp_table_schems = []
+for table_schem in cursor.tables():
+    tmp_table_schems.append(table_schem[1])
+table_schems = set(tmp_table_schems)
+
+print(table_schems)
 
 
 print('\n','columns')
