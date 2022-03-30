@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2 import Error
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+import sys
 
 class PgSql():
     
@@ -14,15 +15,22 @@ class PgSql():
         
     def connect(self):
         self.conn = psycopg2.connect(dbname=self.database, user=self.username, password=self.password, host=self.server)
+        
         self.cursor = self.conn.cursor()
         
     def insert_many(self, table='table', schema='public', s_values='%s', list_records=[]):
-        # s_values = self.gen_S(table)
         sql_insert = f'INSERT INTO {schema}.{table}  VALUES ({s_values});'
-        self.cursor.executemany(sql_insert, list_records)
+        try:
+            self.cursor.executemany(sql_insert, list_records)
+        except psycopg2.errors.UniqueViolation as error:
+            print('\n\n\t########### - ERROR - ###########\n\n', error)
+            msg = f'Таблица {schema}.{table} не пустая, рекомендую удалить её и повторить.\nВозможно стоит пересоздать всю базу.\n'
+            print(msg)
+            sys.exit(1)
         self.conn.commit()
+
     
-    def create_table(self, sql):
+    def create_table_manual(self, sql):
         self.cursor.execute(sql)
         self.conn.commit()
     
@@ -31,6 +39,11 @@ class PgSql():
         self.cursor.execute(sql)
         self.conn.commit()
 
+    def drop_table(self, schema, table):
+        sql = f'DROP TABLE IF EXISTS {schema}.{table};'
+        self.cursor.execute(sql)
+        self.conn.commit()
+        
     def close(self):
         self.cur.close()
         self.conn.close()
