@@ -32,20 +32,38 @@
 # insert(sql_s, 'end')
 # sql_s = []
 
-class MStoPGsql():
+# class MStoPGsql():
     
-    def __init__(self, **kwargs ):
-        print (kwargs)
-        print(kwargs['odbc_driver'])
+#     def __init__(self, **kwargs ):
+#         print (kwargs)
+#         print(kwargs['odbc_driver'])
         
 
-import config
+# import config
 
-mssql = MStoPGsql(
-    odbc_driver=config.odbc_driver,
-    server=config.ms_server,
-    database=config.ms_database,
-    username=config.ms_username,
-    password=config.ms_password,
-    table_schem=config.table_schem
-)
+# mssql = MStoPGsql(
+#     odbc_driver=config.odbc_driver,
+#     server=config.ms_server,
+#     database=config.ms_database,
+#     username=config.ms_username,
+#     password=config.ms_password,
+#     table_schem=config.table_schem
+# )
+
+
+c = [
+    '_1C_Synchronization',
+    '_FIO_Last',
+    '_Workers1C_Contract',
+    'test'
+    ]
+
+prefixes = ['_', 'v']
+
+
+s = '_hello world'
+# prefixes = ['hi', 'bye', 'no']
+
+for a in c:
+    result = a.startswith(tuple(prefixes))
+    print(a, result)

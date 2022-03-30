@@ -7,7 +7,8 @@ ms_username = 'gorinskiy'
 ms_password = 'gorinskiy1'
 odbc_driver = 'FreeTDS'
 ignore_schemas = ['INFORMATION_SCHEMA', 'sys']
-ignore_tables=['sysdiagrams']
+ignore_tables = ['sysdiagrams', 'pLogData', 'Demand_Archiv']
+ignore_prefix = ['_']
 
 # Postgres
 pg_database = ms_database

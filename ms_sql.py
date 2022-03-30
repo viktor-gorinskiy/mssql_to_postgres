@@ -1,3 +1,4 @@
+from distutils.command.config import config
 import pyodbc
 
 class MsSql():
@@ -23,7 +24,7 @@ class MsSql():
         self.cur.close()
         self.conn.close()
        
-    def get_columns(self, schema, table):
+    def get_columns(self, schema='', table=''):
         columns = []
         for row in self.cursor.columns(table=table, schema=schema):
             columns.append(row)
@@ -59,11 +60,11 @@ class MsSql():
         all_records = self.cursor.execute(sql_select)
         return all_records
         
-    def get_tables(self, schema, ignore_tables=[]):
+    def get_tables(self, schema, ignore_tables=[], ignore_prefix=[]):
         tables = []
         for row in self.cursor.tables():
             if row.table_schem == schema:
-                if row[3] == 'TABLE' and row[2] not in ignore_tables:
+                if row[3] == 'TABLE' and row[2] not in ignore_tables and not str(row[2]).startswith(tuple(ignore_prefix)):
                     tables.append(row[2])
         return tables
 
@@ -74,3 +75,24 @@ class MsSql():
         table_schems = set(tmp_table_schems)
         return table_schems
 
+
+# import config
+# mssql = MsSql(
+#     odbc_driver=config.odbc_driver,
+#     server=config.ms_server,
+#     port=config.ms_server_port,
+#     database=config.ms_database,
+#     username=config.ms_username,
+#     password=config.ms_password,
+# )
+# mssql.connect()
+# # columns = mssql.get_columns(schema='dbo', table='Workers1C_Contract')
+
+# # for col in columns:
+# #     print(col)
+    
+    
+# tables = mssql.get_tables('dbo')
+
+# for table in tables:
+#     print(table)

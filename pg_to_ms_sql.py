@@ -101,10 +101,10 @@ for schema in transfer.get_schemas():
 
     pgsql.create_schema(schema)
 
-    tables = mssql.get_tables(schema, ignore_tables=config.ignore_tables)   # Получаем все таблицы
+    tables = mssql.get_tables(schema, ignore_tables=config.ignore_tables, ignore_prefix=config.ignore_prefix)   # Получаем все таблицы
 
     for table in tables:
-        print(table)
+        print(schema, table)
         
         if config.drop_tables:                                              # Будем удалять таблицы перед их созданием?
             pgsql.drop_table(schema, table)

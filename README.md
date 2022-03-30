@@ -50,6 +50,7 @@ pip install psycopg2
 * odbc_driver ==> Тот самый 'Driver', который указывается в файле '/etc/odbcinst.ini'
 * ignore_schemas ==> Список схем, которые будем пропускать
 * ignore_tables ==> Список таблиц, которые будем пропускать
+* ignore_prefix ==> Игнорировать таблицы, имена которых начинаются с этих символов
 
 
 ##### Postgres
