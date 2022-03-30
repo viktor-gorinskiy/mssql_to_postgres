@@ -40,10 +40,11 @@ pip install psycopg2
 Я думаю не должно возникнуть вопросов к нему, но на всяких случай:
 
 ##### Microsoft SQL Serve
-![dbeaver connect](files_for_readme.md_to_git/dbeaver.png)
+
 * ms_database  ==> Имя базы данных
 * ms_server ==> Адрес сервера, указывается в формате 'ip,port'
-* ms_username ==> Имя пользователя для подключения к базе данных (не доменная авторизация. Картинка выше как подсказка)
+* ms_username ==> Имя пользователя для подключения к базе данных (не доменная авторизация. Картинка ниже как подсказка.)
+  <img src="files_for_readme.md_to_git/dbeaver.png" alt="drawing" width="150"/>
 * ms_password ===> Пароль пользователя для подключения к базе данных
 * odbc_driver ==> Тот самый 'Driver', который указывается в файле '/etc/odbcinst.ini'
 * ignore_schemas ==> Список схем, которые будем пропускать
