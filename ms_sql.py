@@ -1,4 +1,3 @@
-from tkinter import PIESLICE
 import pyodbc
 
 class MsSql():
