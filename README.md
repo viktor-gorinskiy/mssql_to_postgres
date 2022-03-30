@@ -71,7 +71,7 @@ pip install psycopg2
 ##### Но я обнаружил несоответствие:
 * Тип данных в Microsoft SQL Server 'uniqueidentifier' должен соответствовать 'CHAR(16)' в Postgres, но это не так, ему соответствует 'UUID'.
 
-Документацию для pyodbc я смотрел [тут](https://code.google.com/archive/p/pyodbc/wikis/Cursor.wiki), но это архив, наверно правильнее будет руководствоваться [оффициальным маном](https://github.com/mkleehammer/pyodbc/wiki/Cursor).
+Документацию для pyodbc я смотрел [тут](https://code.google.com/archive/p/pyodbc/wikis), но это архив, наверно правильнее будет руководствоваться [оффициальным маном](https://github.com/mkleehammer/pyodbc/wiki/Cursor).
 
 Но мне было достаточно того, что columns состоит из:
 * table_cat

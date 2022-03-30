@@ -1,3 +1,4 @@
+from tkinter import PIESLICE
 import pyodbc
 
 class MsSql():
@@ -19,31 +20,33 @@ class MsSql():
         
         self.cursor = self.conn.cursor()
         
-  
+    def close(self):
+        self.cur.close()
+        self.conn.close()
        
-    def get_columns(self, table):
-        columns = self.cursor.columns(table=table)
+    def get_columns(self, schema, table):
+        columns = []
+        for row in self.cursor.columns(table=table, schema=schema):
+            columns.append(row)
         return columns
 
     def return_primaryKeys(self,primaryKeys):
         return f"""PRIMARY KEY ("{primaryKeys}")"""
         
-    def get_primaryKeys(self, table):
-        primaryKeys = self.cursor.primaryKeys(table=table)                                                                                                  
+    def get_primaryKeys(self, schema='', table=''):
+        primaryKeys = self.cursor.primaryKeys(table=table, schema=schema) 
         for row in primaryKeys:
             return self.return_primaryKeys(row[3])
         return False
 
-    def close(self):
-        self.cur.close()
-        self.conn.close()
+
     
     ############################################
     
-    def len_columns(self, table):
-        columns = self.cursor.columns(table=table)
+    def len_columns(self, schema='', table=''):
+        columns = self.cursor.columns(table=table, schema=schema)
         c = 0
-        for row in columns:
+        for tmp in columns:
             c+=1
         return c
     
@@ -71,19 +74,4 @@ class MsSql():
             tmp_table_schems.append(table_schem[1])
         table_schems = set(tmp_table_schems)
         return table_schems
-    
-    
-# import config
 
-# mssql = MsSql(
-#     odbc_driver=config.odbc_driver,
-#     server=config.ms_server,
-#     port=config.ms_server_port,
-#     database=config.ms_database,
-#     username=config.ms_username,
-#     password=config.ms_password,
-# )
-
-# mssql.connect()
-
-# print(mssql.len_records_in_table('dbo', 'Absence_log_set'))

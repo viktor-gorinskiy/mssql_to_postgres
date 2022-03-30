@@ -19,7 +19,7 @@ class PgSql():
         
         self.cursor = self.conn.cursor()
         
-    def insert_many(self, table='table', schema='public', s_values='%s', list_records=[]):
+    def insert_manyal(self, table='table', schema='public', s_values='%s', list_records=[]):
         sql_insert = f'INSERT INTO {schema}.{table}  VALUES ({s_values});'
         try:
             self.cursor.executemany(sql_insert, list_records)
@@ -28,6 +28,18 @@ class PgSql():
             msg = f'Таблица {schema}.{table} не пустая, рекомендую удалить её и повторить.\nВозможно стоит пересоздать всю базу.\n'
             print(msg)
             sys.exit(1)
+        except IndexError as error:
+            print('\terror ==>', error)
+            print('\tsql_insert==>', sql_insert)
+            for list_record in list_records:
+                print('\t',list_record)
+                sys.exit(1)
+        except psycopg2.errors.NotNullViolation as error:
+            print('\terror ==>', error)
+            print('\tsql_insert==>', sql_insert)
+            for list_record in list_records:
+                print('\t',list_record)
+                sys.exit(1)
         self.conn.commit()
 
     

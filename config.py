@@ -18,4 +18,4 @@ pg_server_port = 5432
 
 # Settings
 drop_tables = True #False
-pull = 1000
+pull = 5000

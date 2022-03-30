@@ -31,8 +31,8 @@ class MStoPGsql():
         if is_nul == 'YES': return 'NULL'
         return 'NOT NULL'
     
-    def get_MStoPG_columns(self, table):                                # Возвращает поля с типом данных для Postgres
-        columns = mssql.get_columns(table=table)
+    def get_MStoPG_columns(self, schema, table):                                # Возвращает поля с типом данных для Postgres
+        columns = mssql.get_columns(schema=schema, table=table)
         sql_lines = []
         for column in columns:
             type_d = self.return_type(column[5], column[6], column[8])  # преобразуем тип данных ==> type_data, len_data, scale
@@ -44,13 +44,13 @@ class MStoPGsql():
     def get_sql_create_table_to_pg(self, schema, table):                # Возвращает строку с правильным SQL для создания таблицы в PG   
         sql = f"""CREATE TABLE IF NOT EXISTS {schema}.{table}(\n"""
         c = 0
-        sql_lenes = self.get_MStoPG_columns(table)
+        sql_lenes = self.get_MStoPG_columns(schema, table)
         for sql_lene in sql_lenes:
             c+=1
             sql += sql_lene
             if c < len(sql_lenes):
                 sql += ',\n'
-        pk_str = mssql.get_primaryKeys(table)                           # Запрашиваем PrimaryKeys
+        pk_str = mssql.get_primaryKeys(table=table, schema=schema)                           # Запрашиваем PrimaryKeys
         if pk_str:
             sql += ',\n' + pk_str + '\n'
         sql += ');'
@@ -61,7 +61,7 @@ class MStoPGsql():
         pgsql.create_table_manual(sql)
 
     def gen_S(self, table):
-        count_columns = mssql.len_columns(table)
+        count_columns = mssql.len_columns(schema, table)
         s_values = (", ".join(['%s' for x in range(count_columns)]))
         return s_values
 
@@ -107,7 +107,6 @@ for schema in transfer.get_schemas():
         print(table)
         
         if config.drop_tables:                                              # Будем удалять таблицы перед их созданием?
-            print('\tDROP TABLE:', schema, table)
             pgsql.drop_table(schema, table)
             
         transfer.transfer_table(schema, table)                              # Создаем таблицу в Postgress
@@ -125,12 +124,12 @@ for schema in transfer.get_schemas():
             sql_s.append(row)
             
             if not cicle%pull:              # Если заполнился пул, то скидываем его на загрузку в посгрес
-                pgsql.insert_many(table=table, schema=schema, s_values=s_values, list_records=sql_s)        # Само скидывание, скидываем массив 'sql_s'
                 print('\tPull', schema, table, 'cicle ==>', cicle, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
+                pgsql.insert_manyal(table=table, schema=schema, s_values=s_values, list_records=sql_s)        # Само скидывание, скидываем массив 'sql_s'
                 sql_s = []
         # А теперь остаток от общего количества записей, кторый не вошел в последний пул
-        pgsql.insert_many(table=table, schema=schema, s_values=s_values, list_records=sql_s)   # Само скидывание
         print('\tEnd', schema, table, 'count_records_table ==>', count_records_table, 'len sql_s ==>', len(sql_s))
+        pgsql.insert_manyal(table=table, schema=schema, s_values=s_values, list_records=sql_s)   # Само скидывание
         print()
 
 # Закрываем подключения к базам
