@@ -40,7 +40,7 @@ pip install psycopg2
 Я думаю не должно возникнуть вопросов к нему, но на всяких случай:
 
 ##### Microsoft SQL Serve
-<img align="left" width="120" height="120" src="files_for_readme.md_to_git/dbeaver.png"><br>
+<img align="left" width="120" height="120" src="files_for_readme.md_to_git/dbeaver.png">
 * ms_database  ==> Имя базы данных
 * ms_server ==> Адрес сервера, указывается в формате 'ip,port'
 * ms_username ==> Имя пользователя для подключения к базе данных (не доменная авторизация)
