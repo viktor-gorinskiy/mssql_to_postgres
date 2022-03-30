@@ -27,7 +27,6 @@ class MStoPGsql():
         if type_data == 'varbinary': return 'BYTEA'
         return type_data    # Возвращаем то, что пришло, если ничего не подошло.
 
-
     def return_null(self, is_nul):                                      # Если Not Null 'YES', то заменяем на 'NULL' иначе 'NOT NULL'
         if is_nul == 'YES': return 'NULL'
         return 'NOT NULL'
@@ -76,6 +75,7 @@ class MStoPGsql():
 mssql = ms_sql.MsSql(
     odbc_driver=config.odbc_driver,
     server=config.ms_server,
+    port=config.ms_server_port,
     database=config.ms_database,
     username=config.ms_username,
     password=config.ms_password,
@@ -83,6 +83,7 @@ mssql = ms_sql.MsSql(
 
 pgsql = pg_sql.PgSql(
     server=config.pg_server,
+    port=config.pg_server_port,
     database=config.pg_database,
     username=config.pg_username,
     password=config.pg_password
@@ -111,7 +112,7 @@ for schema in transfer.get_schemas():
             
         transfer.transfer_table(schema, table)                              # Создаем таблицу в Postgress
         
-        s_values = transfer.gen_S(table)
+        s_values = transfer.gen_S(table)                                    # Для правильного SQL запроса нужно создать  нужное количество '%s'.
         
         count_records_table = mssql.len_records_in_table(schema, table)     # Получаем общее количество записей в таблице
         all_records_in_table = mssql.get_all_records(schema, table)         # Получаем все записи в таблице

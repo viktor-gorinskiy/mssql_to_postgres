@@ -8,13 +8,13 @@
 ### Подготовка:
 Для работы скриптов нужен python3, tdsodbc, unixodbc-dev, libpq-dev и python библиотеки: pyodbc, psycopg2
 
-#### pyodbc
+##### pyodbc
 ```
 apt install tdsodbc
 apt install unixodbc-dev
 pip install pyodbc
 ```
-Настройка ODBC:
+##### Настройка ODBC:
 ```
 cat /etc/odbcinst.ini
 [FreeTDS]
@@ -25,7 +25,7 @@ CPTimeout =
 CPReuse =
 ```
 
-#### psycopg2
+##### psycopg2
 ```
 apt install libpq-dev
 pip install psycopg2
@@ -42,7 +42,8 @@ pip install psycopg2
 ##### Microsoft SQL Serve
 
 * ms_database  ==> Имя базы данных
-* ms_server ==> Адрес сервера, указывается в формате 'ip,port'
+* ms_server ==> Адрес сервера
+* ms_server_port ==> Порт для подключения, можно не указывать, по умолчанию = 1433
 * ms_username ==> Имя пользователя для подключения к базе данных (не доменная авторизация. Картинка ниже как подсказка.)  
   <img src="files_for_readme.md_to_git/dbeaver.png" alt="drawing" width="150"/>
 * ms_password ===> Пароль пользователя для подключения к базе данных
@@ -56,9 +57,11 @@ pip install psycopg2
 * pg_username ==> Имя пользователя для подключения к базе данных
 * pg_password ==>  Пароль пользователя для подключения к базе данных
 * pg_server   ==> Адрес сервера
+* pg_server_port ==> Порт для подключения, можно не указывать, по умолчанию = 5432
 
-# Settings
+### Settings
 * drop_tables ==> Надо удалять таблицы перед их созданием?
+  * Не проверяет удалилась ли база, если база не успевает удалиться, то будет ошибка дубликата базы. Стоит удалить таблицу руками или начать заново с чистой базы
 * pull ==> Размер записей, котрые за раз будем закидывать в Postgres
 
 ### Ссылки
@@ -100,4 +103,8 @@ pip install psycopg2
 |column[17]|is_nullable|
 
 
+### RUN
 
+```
+python3 pg_to_ms_sql.py
+```

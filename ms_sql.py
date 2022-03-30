@@ -2,9 +2,10 @@ import pyodbc
 
 class MsSql():
     
-    def __init__(self, odbc_driver, server, database, username, password):
+    def __init__(self, odbc_driver='', server='', port=1433, database='', username='', password=''):
         self.DRIVER = odbc_driver
         self.server = server
+        self.port = port
         self.database = database
         self.username = username
         self.password = password
@@ -12,8 +13,13 @@ class MsSql():
         self.conn = None
     
     def connect(self):
-        self.conn = pyodbc.connect('DRIVER={FreeTDS};' + f"SERVER={self.server};DATABASE={self.database};UID={self.username};PWD={self.password}")
+        self.conn = pyodbc.connect(driver=self.DRIVER, server=self.server, database=self.database, port=self.port, uid=self.username, pwd=self.password)
+        self.conn.setdecoding(pyodbc.SQL_CHAR, encoding='latin1')
+        self.conn.setencoding('latin1')
+        
         self.cursor = self.conn.cursor()
+        
+  
        
     def get_columns(self, table):
         columns = self.cursor.columns(table=table)
@@ -42,11 +48,12 @@ class MsSql():
         return c
     
     def len_records_in_table(self, schema, table):
-        sql_count = f"SELECT COUNT(*) FROM {self.database}.{schema}.{table};"
-        return self.cursor.execute(sql_count).fetchone()[0]
+        sql_count = f"SELECT COUNT(*) FROM [{self.database}].{schema}.[{table}];"
+        count = self.cursor.execute(sql_count).fetchone()
+        return count[0]
 
     def get_all_records(self, schema, table):
-        sql_select = f"SELECT * FROM {self.database}.{schema}.{table}"
+        sql_select = f"SELECT * FROM [{self.database}].{schema}.[{table}]"
         all_records = self.cursor.execute(sql_select)
         return all_records
         
@@ -64,3 +71,19 @@ class MsSql():
             tmp_table_schems.append(table_schem[1])
         table_schems = set(tmp_table_schems)
         return table_schems
+    
+    
+# import config
+
+# mssql = MsSql(
+#     odbc_driver=config.odbc_driver,
+#     server=config.ms_server,
+#     port=config.ms_server_port,
+#     database=config.ms_database,
+#     username=config.ms_username,
+#     password=config.ms_password,
+# )
+
+# mssql.connect()
+
+# print(mssql.len_records_in_table('dbo', 'Absence_log_set'))

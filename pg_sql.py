@@ -5,8 +5,9 @@ import sys
 
 class PgSql():
     
-    def __init__(self, server, database, username, password):
+    def __init__(self, server='localhost', port=5432, database='', username='', password=''):
         self.server = server
+        self.port = port
         self.database = database
         self.username = username
         self.password = password
@@ -14,7 +15,7 @@ class PgSql():
         self.conn = None
         
     def connect(self):
-        self.conn = psycopg2.connect(dbname=self.database, user=self.username, password=self.password, host=self.server)
+        self.conn = psycopg2.connect(dbname=self.database, user=self.username, password=self.password, host=self.server, port=self.port)
         
         self.cursor = self.conn.cursor()
         
